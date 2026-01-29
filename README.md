@@ -34,7 +34,8 @@ ykman piv certificates request --subject "CN=USER_NAME" 9a pubkey.pem user.csr
 -----
 # creating locale CA
 openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -days 3650 -noenc -keyout ca.key -out ca.crt -subj "/CN=localhost"  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
-                                                                                                                                                    #  create file client-cert-extensions.cnf with content
+
+#  create file client-cert-extensions.cnf with content
 basicConstraints = CA:FALSE
 keyUsage = digitalSignature
 extendedKeyUsage = clientAuth
