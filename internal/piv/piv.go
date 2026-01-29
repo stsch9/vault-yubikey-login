@@ -50,6 +50,5 @@ func GetPINFromInput() (string, error) {
 		fmt.Println("No PIN provided, using default PIN")
 		pin = piv.DefaultPIN
 	}
-	fmt.Println(pin)
 	return pin, nil
 }
