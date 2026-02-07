@@ -1,6 +1,6 @@
 # vault-yubikey-login
 
-Simple CLI to authenticate to HashiCorp Vault using a YubiKey PIV certificate. The [TLS certificates auth method](https://developer.hashicorp.com/vault/docs/auth/cert) is used for this purpose. After successful login, the vault token is stored in `~/.vault-token` and can now be used with the [vault cli](https://developer.hashicorp.com/vault/docs/commands).
+Simple CLI to authenticate to HashiCorp Vault using a YubiKey PIV certificate. The [TLS certificates auth method](https://developer.hashicorp.com/vault/docs/auth/cert) is used for this purpose. After successful login, the vault token is stored in `~/.vault-token` and can now be used with the [vault cli](https://developer.hashicorp.com/vault/docs/commands). I am not aware of any way to use the YubiKey together with the vault cli.
 
 Build
 -----
@@ -62,6 +62,8 @@ export VAULT_ADDR='https://127.0.0.1:8200'
 export VAULT_CACERT='.//vault-ca.pem'
 vault auth enable cert
 vault write auth/cert/certs/web display_name=web policies=web,prod certificate=@ca.crt ttl=3600
+
+# login
 ./vault-yubikey-login cert my-role
 ```
 
