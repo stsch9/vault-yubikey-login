@@ -57,13 +57,12 @@ ykman piv info
 # start dev vault server (in a new tab)
 vault server -dev -dev-root-token-id=root -dev-tls -dev-tls-cert-dir=./
 
-# configure tls auth, CA.crt = trusted CA
+# configure tls auth, ca.crt = trusted CA
+export VAULT_ADDR='https://127.0.0.1:8200'
+export VAULT_CACERT='.//vault-ca.pem'
 vault auth enable cert
-vault write auth/cert/certs/web display_name=web policies=web,prod certificate=@CA.crt ttl=3600
-
-export VAULT_ADDR=https://vault.example.com:8200
-export VAULT_CACERT=/path/to/vault-ca.pem   # optional; if unset system roots are used
-./vault-yubikey-login cert my-role         # uses role 'my-role'
+vault write auth/cert/certs/web display_name=web policies=web,prod certificate=@ca.crt ttl=3600
+./vault-yubikey-login cert my-role
 ```
 
 What it does
