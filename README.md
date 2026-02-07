@@ -8,7 +8,7 @@ Build
 Install Go (1.20+ recommended) and build:
 
 ```sh
-go build ./cmd/vault-yubikey-login
+go build -o vault-yubiky-login cmd/vault-yubikey-login/main.go
 ```
 
 Usage
@@ -21,11 +21,21 @@ Environment variables
 - `VAULT_ADDR` (required): Vault server address, e.g. `https://vault.example.com:8200`.
 - `VAULT_CACERT` (optional): Path to CA certificate PEM file. If not set, system root CAs are used.
 
-Example with Test system (not for production)
+Example with Test system (not for production!)
 --------
 
 In this example, the cli tool `ykman` is used to configure the yubikey.
 
+Create file `client-cert-extensions.cnf` with content
+```sh
+basicConstraints = CA:FALSE
+keyUsage = digitalSignature
+extendedKeyUsage = clientAuth
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+```
+
+Execute the following commands:
 ```sh
 # yubikey key generation and csr creation
 ykman piv keys generate --algorithm ECCP256 9a pubkey.pem
@@ -35,13 +45,6 @@ ykman piv certificates request --subject "CN=USER_NAME" 9a pubkey.pem user.csr
 # creating locale CA
 openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -days 3650 -noenc -keyout ca.key -out ca.crt -subj "/CN=localhost"  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
 
-#  create file client-cert-extensions.cnf with content
-basicConstraints = CA:FALSE
-keyUsage = digitalSignature
-extendedKeyUsage = clientAuth
-subjectKeyIdentifier = hash
-authorityKeyIdentifier = keyid,issuer
-
 # sign user csr
 openssl x509 -req -in user.csr -out client.crt -CA ca.crt -CAkey ca.key -CAcreateserial -days 3650 -extfile client-cert-extensions.cnf
 
@@ -50,6 +53,13 @@ ykman piv certificates import 9a client.crt
 
 # cert prüfen
 ykman piv info
+
+# start dev vault server (in a new tab)
+vault server -dev -dev-root-token-id=root -dev-tls -dev-tls-cert-dir=./
+
+# configure tls auth, CA.crt = trusted CA
+vault auth enable cert
+vault write auth/cert/certs/web display_name=web policies=web,prod certificate=@CA.crt ttl=3600
 
 export VAULT_ADDR=https://vault.example.com:8200
 export VAULT_CACERT=/path/to/vault-ca.pem   # optional; if unset system roots are used
