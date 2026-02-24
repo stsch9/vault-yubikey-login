@@ -5,7 +5,12 @@ Simple CLI to authenticate to HashiCorp Vault using a YubiKey PIV certificate. T
 Build
 -----
 
-Install Go (1.20+ recommended) and build:
+Install Go (1.20+ recommended). The following packages are required for [go-piv](https://github.com/go-piv/piv-go), see [Installation](https://github.com/go-piv/piv-go?tab=readme-ov-file#installation). For example, install the packages on Ubuntu
+```sh
+sudo apt-get install pcscd
+sudo apt-get install libpcsclite-dev
+```
+Now you can build the package:
 
 ```sh
 go build -o vault-yubiky-login cmd/vault-yubikey-login/main.go
